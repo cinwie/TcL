@@ -565,14 +565,21 @@ if {[lindex $channels $next_num] != ""} {
 ###
 proc corona:getdata {} {
 	set link "https://www.worldometers.info/coronavirus/"
-	http::register https 443 [list ::tls::socket -tls1 1]
+#	http::register https 443 [list ::tls::socket -tls1 1]
+	::http::register https 443 tls:socket
+
 	set ipq [http::config -useragent "lynx"]
 	set ipq [::http::geturl "$link"] 
 	set data [http::data $ipq]
 	::http::cleanup $ipq
 	return $data
 }
-
+proc tls:socket args {
+   set opts [lrange $args 0 end-2]
+   set host [lindex $args end-1]
+   set port [lindex $args end]
+   ::tls::socket -servername $host {*}$opts $host $port
+}
 ###
 proc corona:pub {nick host hand chan arg} {
 	global corona
