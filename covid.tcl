@@ -1,14 +1,14 @@
 #######################################################################################################
-## Covid19.tcl 1.3.3  (10/04/2020)  			  Copyright 2008 - 2020 @ WwW.TCLScripts.NET ##
+## Covid19.tcl 1.3.4  (15/05/2020)  			  Copyright 2008 - 2020 @ WwW.TCLScripts.NET   ##
 ##                        _   _   _   _   _   _   _   _   _   _   _   _   _   _                      ##
 ##                       / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \                     ##
 ##                      ( T | C | L | S | C | R | I | P | T | S | . | N | E | T )                    ##
 ##                       \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/                     ##
 ##                                                                                                   ##
-##                                      ® BLaCkShaDoW Production ®                    	             ##
+##                                      ® BLaCkShaDoW Production ®                    	         ##
 ##                                                                                                   ##
 ##                                              PRESENTS                                             ##
-##									                            ®##
+##									                               ®##
 ############################################  Covid-19 TCL   ##########################################
 ##									                             ##
 ##  DESCRIPTION: 							                             ##
@@ -84,13 +84,16 @@
 ##		      serious cases, tests for countries				             ##
 ##		   -- solved some bugs related to settng your default country			     ##
 ##		   -- added spanish language support                                                 ##
-##												     ##
-##   Version 1.3.2 -- added last updated entry to channel output				     ##
-##												     ##
-##   Version 1.3.3 -- added total stats for continents Europe, North America, Asia, South America,   ##
-##                    Africa, Oceania								     ##
-##                 -- soved issue with GLOBAL stats output                                           ##
-##												     ##
+##												        ##
+##   Version 1.3.2 -- added last updated entry to channel output				         ##
+##												         ##
+##   Version 1.3.3 -- added total stats for continents Europe, North America, Asia, South America,    ##
+##                    Africa, Oceania								          ##
+##                 -- soved issue with GLOBAL stats output                                            ##
+##												          ##
+##   Version 1.3.4 -- solved some issues due to page info modification                                ##
+##                 -- solved some little bugs                                                         ##
+##												         ##
 #######################################################################################################
 #######################################################################################################
 ##									                             ##
@@ -153,7 +156,7 @@ set corona(flood_prot) "3:10"
 #If the info changed it will be shown on chan
 #only when the option is enabled with +autocovid
 ###
-set corona(time_check) "60"
+set corona(time_check) "15"
 
 ########################################################################################################
 
@@ -173,204 +176,219 @@ set corona(continent_list) {
 
 set corona(country_list) {
 "USA"
-"China"
-"Italy"
 "Spain"
-"Germany"
-"Iran"
+"Italy"
 "France"
-"Switzerland"
+"Germany"
 "UK"
-"S. Korea"
-"Netherlands"
-"Austria"
+"Turkey"
+"China"
+"Iran"
+"Russia"
+"Brazil"
 "Belgium"
 "Canada"
-"Turkey"
+"Netherlands"
+"Switzerland"
 "Portugal"
-"Norway"
-"Australia"
-"Brazil"
+"India"
+"Peru"
+"Ireland"
+"Austria"
 "Sweden"
 "Israel"
-"Malaysia"
-"Czechia"
-"Denmark"
-"Ireland"
-"Luxembourg"
 "Japan"
-"Ecuador"
+"S. Korea"
 "Chile"
-"Poland"
-"Pakistan"
-"Thailand"
-"Romania"
+"Ecuador"
 "Saudi Arabia"
-"Finland"
-"South Africa"
-"Indonesia"
-"Greece"
-"Russia"
-"Iceland"
-"India"
-"Diamond Princess"
-"Philippines"
-"Singapore"
-"Peru"
-"Slovenia"
-"Panama"
-"Qatar"
-"Estonia"
-"Argentina"
-"Egypt"
-"Croatia"
-"Colombia"
-"Dominican Republic"
+"Poland"
+"Romania"
+"Pakistan"
 "Mexico"
-"Bahrain"
-"Serbia"
-"Hong Kong"
-"Iraq"
-"Lebanon"
-"Algeria"
+"Denmark"
+"Norway"
 "UAE"
+"Czechia"
+"Australia"
+"Singapore"
+"Indonesia"
+"Serbia"
+"Philippines"
+"Ukraine"
+"Qatar"
+"Malaysia"
+"Belarus"
+"Dominican Republic"
+"Panama"
+"Finland"
+"Colombia"
+"Luxembourg"
+"South Africa"
+"Egypt"
+"Morocco"
+"Argentina"
+"Thailand"
+"Algeria"
+"Moldova"
+"Bangladesh"
+"Greece"
+"Hungary"
+"Kuwait"
+"Bahrain"
+"Croatia"
+"Iceland"
+"Kazakhstan"
+"Uzbekistan"
+"Iraq"
+"Estonia"
+"New Zealand"
+"Azerbaijan"
+"Slovenia"
 "Lithuania"
 "Armenia"
-"New Zealand"
-"Morocco"
-"Bulgaria"
-"Hungary"
-"Taiwan"
-"Latvia"
-"Costa Rica"
-"Slovakia"
-"Andorra"
-"Uruguay"
-"Jordan"
-"San Marino"
-"Kuwait"
-"North Macedonia"
-"Tunisia"
-"Ukraine"
 "Bosnia and Herzegovina"
-"Moldova"
-"Albania"
-"Vietnam"
-"Burkina Faso"
-"Cyprus"
-"Faeroe Islands"
-"RÃƒÂ©union"
-"Malta"
-"Ghana"
-"Azerbaijan"
-"Brunei"
-"Kazakhstan"
 "Oman"
-"Sri Lanka"
-"Venezuela"
-"Senegal"
-"Cambodia"
-"Ivory Coast"
-"Afghanistan"
-"Belarus"
-"Palestine"
-"Mauritius"
-"Georgia"
-"Cameroon"
-"Uzbekistan"
-"Guadeloupe"
-"Montenegro"
+"North Macedonia"
+"Slovakia"
 "Cuba"
-"Channel Islands"
-"Martinique"
-"Nigeria"
-"Trinidad and Tobago"
-"Liechtenstein"
-"Honduras"
-"DRC"
-"Bangladesh"
-"Kyrgyzstan"
-"Bolivia"
-"Paraguay"
-"Rwanda"
-"Mayotte"
-"Monaco"
-"Kenya"
-"Macao"
-"French Polynesia"
-"French Guiana"
-"Jamaica"
-"Gibraltar"
-"Isle of Man"
-"Guatemala"
-"Madagascar"
-"Togo"
-"Aruba"
-"Barbados"
-"Zambia"
-"New Caledonia"
-"Uganda"
-"El Salvador"
-"Maldives"
-"Tanzania"
-"Equatorial Guinea"
-"Ethiopia"
+"Hong Kong"
+"Cameroon"
+"Afghanistan"
+"Bulgaria"
+"Tunisia"
+"Ivory Coast"
 "Djibouti"
-"Dominica"
-"Mongolia"
-"Saint Martin"
-"Cayman Islands"
-"Haiti"
-"Namibia"
-"Suriname"
-"Gabon"
+"Ghana"
+"Cyprus"
+"Latvia"
+"Andorra"
+"Diamond Princess"
+"Lebanon"
+"Costa Rica"
 "Niger"
-"Bermuda"
-"Mozambique"
-"Seychelles"
-"CuraÃƒÂ§ao"
-"Benin"
-"Greenland"
-"Laos"
-"Guyana"
-"Bahamas"
-"Fiji"
-"Syria"
-"Cabo Verde"
-"Angola"
-"Congo"
-"Eritrea"
 "Guinea"
-"Vatican City"
+"Burkina Faso"
+"Albania"
+"Kyrgyzstan"
+"Nigeria"
+"Bolivia"
+"Uruguay"
+"Channel Islands"
+"Honduras"
+"San Marino"
+"Palestine"
+"Malta"
+"Taiwan"
+"Jordan"
+"Réunion"
+"Georgia"
+"Senegal"
+"Mauritius"
+"DRC"
+"Montenegro"
+"Isle of Man"
+"Sri Lanka"
+"Mayotte"
+"Kenya"
+"Vietnam"
+"Guatemala"
+"Venezuela"
 "Mali"
-"Eswatini"
-"Gambia"
-"Sudan"
-"Zimbabwe"
-"Nepal"
-"Antigua and Barbuda"
-"CAR"
-"Chad"
-"Liberia"
-"Mauritania"
-"Myanmar"
-"St. Barth"
-"Saint Lucia"
-"Sint Maarten"
-"Belize"
-"Bhutan"
-"British Virgin Islands"
-"Guinea-Bissau"
-"Montserrat"
-"Nicaragua"
-"Saint Kitts and Nevis"
+"Paraguay"
+"El Salvador"
+"Faeroe Islands"
+"Jamaica"
+"Tanzania"
 "Somalia"
-"Turks and Caicos"
-"Grenada"
+"Martinique"
+"Guadeloupe"
+"Rwanda"
+"Congo"
+"Brunei"
+"Gibraltar"
+"Cambodia"
+"Madagascar"
+"Trinidad and Tobago"
+"Myanmar"
+"Gabon"
+"Ethiopia"
+"Aruba"
+"French Guiana"
+"Monaco"
+"Liberia"
+"Bermuda"
+"Togo"
+"Liechtenstein"
+"Equatorial Guinea"
+"Barbados"
+"Sint Maarten"
+"Sudan"
+"Guyana"
+"Zambia"
+"Cabo Verde"
+"Cayman Islands"
+"Bahamas"
+"French Polynesia"
+"Uganda"
+"Maldives"
+"Guinea-Bissau"
 "Libya"
-"Papua New Guinea"
-"St. Vincent Grenadines"
+"Haiti"
+"Macao"
+"Syria"
+"Eritrea"
+"Mozambique"
+"Saint Martin"
+"Benin"
+"Sierra Leone"
+"Chad"
+"Mongolia"
+"Nepal"
+"Zimbabwe"
+"Angola"
+"Antigua and Barbuda"
+"Eswatini"
+"Botswana"
+"Laos"
 "Timor-Leste"
+"Belize"
+"New Caledonia"
+"Malawi"
+"Fiji"
+"Dominica"
+"Namibia"
+"Saint Lucia"
+"Curaçao"
+"Grenada"
+"Saint Kitts and Nevis"
+"CAR"
+"St. Vincent Grenadines"
+"Turks and Caicos"
+"Falkland Islands"
+"Greenland"
+"Montserrat"
+"Seychelles"
+"Nicaragua"
+"Gambia"
+"Suriname"
+"MS Zaandam"
+"Vatican City"
+"Mauritania"
+"Papua New Guinea"
+"St. Barth"
+"Western Sahara"
+"Burundi"
+"Bhutan"
+"Caribbean Netherlands"
+"British Virgin Islands"
+"Sao Tome and Principe"
+"South Sudan"
+"Anguilla"
+"Saint Pierre Miquelon"
+"Yemen"
+"Lesotho"
+"Comoros"
 "Europe"
 "North America"
 "Asia"
@@ -457,6 +475,7 @@ if {[string tolower $country] == "global"} {
 	set totaltests_per_milion [lindex $extract 10]
 	set type [lindex $extract 11]
 	set last_updated [lindex $extract 12]
+	set extract [string map [list $last_updated ""] $extract]
 if {$new_cases == ""} { set new_cases - }
 if {$total_deaths == ""} { set total_deaths - }
 if {$new_deaths == ""} { set new_deaths - }
@@ -594,12 +613,12 @@ if {$total > "0"} {
 	set last_line 0
 switch $total {
 	1 {
-	set var "<tr class=\"total_row_world\">"
+	set var "<td style=\"text-align:left;\">World</td>"
 	}
 	2 {
 	set var "<nobr>$country</nobr>"
 	}
-}	
+}
 foreach line $split_data {
 	set line [concat $line]
 if {[regexp -nocase $var $line]} {
@@ -701,6 +720,7 @@ if {$test > 0} {
 	lappend information $m
 	}
 }
+
 	set country [corona:filter [lindex $information 0] 0]
 	set total_cases [corona:filter [lindex $information 1] 0]
 	set new_cases [corona:filter [lindex $information 2] 0]
@@ -713,11 +733,12 @@ if {$test > 0} {
 	set deaths_per_milion [corona:filter [lindex $information 9] 0]
 	set total_tests [corona:filter [lindex $information 10] 0]
 	set totaltests_per_milion [corona:filter [lindex $information 11] 0]
+	
 
-	set yesterday_total_recovered [corona:comma [corona:filter [lindex $information_yesterday 5] 0]]
-	set yesterday_active_cases [corona:comma [corona:filter [lindex $information_yesterday 6] 0]]
-	set yesterday_serious_cases [corona:comma [corona:filter [lindex $information_yesterday 7] 0]]
-	set yesterday_total_tests [corona:comma [corona:filter [lindex $information_yesterday 10] 0]]
+	set yesterday_total_recovered [corona:comma [corona:filter [lindex $information_yesterday 6] 0]]
+	set yesterday_active_cases [corona:comma [corona:filter [lindex $information_yesterday 7] 0]]
+	set yesterday_serious_cases [corona:comma [corona:filter [lindex $information_yesterday 8] 0]]
+	set yesterday_total_tests [corona:comma [corona:filter [lindex $information_yesterday 11] 0]]
 
 	set dif_total_recovered 0
 	set dif_active_cases 0
@@ -916,7 +937,7 @@ proc fixpoint {varName script} {
 set corona(name) "Covid-19"
 set corona(owner) "BLaCkShaDoW"
 set corona(site) "WwW.TclScripts.Net"
-set corona(version) "1.3.3"
+set corona(version) "1.3.4"
 
 ####
 #Language
