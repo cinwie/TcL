@@ -1,321 +1,84 @@
 ##############################
-# GeoIP.tcl Version 18.09.18
+# GeoIP.tcl Version 16.09.25
 ##############################
 
-package require http 
-package require json 
+package require http
+package require json
 
 ##############################
 # SETTINGS
 ##############################
 
-set geoip(version) "18.09.18"
-set geoip(trigger) ".ip"
-set geoip(trigger2) "!ip"
+set geoip(version) "16.09.25"
+set geoip(triggers) {.ip !ip .dns !dns}
 
 ##############################
 # BINDS
 ##############################
 
 bind pub - $geoip(trigger) pub_geoip
-bind pub - $geoip(trigger2) pub_geoip
 
 ##############################
 # CODE
 ##############################
 
-set codes {
-  "BIZ=Business"
-  "COM=US Commercial"
-  "EDU=US Educational"
-  "GOV=US Government"
-  "INT=International"
-  "MIL=US Military"
-  "NET=Network"
-  "ORG=Non-Profit Organization"
-  "ARPA=Old style Arpanet"
-  "NATO=Nato field"
-  "AD=Andorra"
-  "AE=United Arab Emirates"
-  "AF=Afghanistan"
-  "AG=Antigua and Barbuda"
-  "AI=Anguilla"
-  "AL=Albania"
-  "AM=Armenia"
-  "AN=Netherlands Antilles"
-  "AO=Angola"
-  "AQ=Antarctica"
-  "AR=Argentina"
-  "AS=American Samoa"
-  "AT=Austria"
-  "AU=Australia"
-  "AW=Aruba"
-  "AZ=Azerbaijan"
-  "BA=Bosnia and Herzegovina"
-  "BB=Barbados"
-  "BD=Bangladesh"
-  "BE=Belgium"
-  "BF=Burkina Faso"
-  "BG=Bulgaria"
-  "BH=Bahrain"
-  "BI=Burundi"
-  "BJ=Benin"
-  "BM=Bermuda"
-  "BN=Brunei Darussalam"
-  "BO=Bolivia"
-  "BR=Brazil"
-  "BS=Bahamas"
-  "BT=Bhutan"
-  "BV=Bouvet Island"
-  "BW=Botswana"
-  "BY=Belarus"
-  "BZ=Belize"
-  "CA=Canada"
-  "CC=Cocos Islands"
-  "CF=Central African Republic"
-  "CG=Congo"
-  "CH=Switzerland"
-  "CI=Cote D'Ivoire"
-  "CK=Cook Islands"
-  "CL=Chile"
-  "CM=Cameroon"
-  "CN=China"
-  "CO=Colombia"
-  "CR=Costa Rica"
-  "CS=Former Czechoslovakia"
-  "CU=Cuba"
-  "CV=Cape Verde"
-  "CX=Christmas Island"
-  "CY=Cyprus"
-  "CZ=Czech Republic"
-  "DE=Germany"
-  "DJ=Djibouti"
-  "DK=Denmark"
-  "DM=Dominica"
-  "DO=Dominican Republic"
-  "DZ=Algeria"
-  "EC=Ecuador"
-  "EE=Estonia"
-  "EG=Egypt"
-  "EH=Western Sahara"
-  "ER=Eritrea"
-  "ES=Spain"
-  "ET=Ethiopia"
-  "FI=Finland"
-  "FJ=Fiji"
-  "FK=Falkland Islands"
-  "FM=Micronesia"
-  "FO=Faroe Islands"
-  "FR=France"
-  "FX=France, Metropolitan"
-  "GA=Gabon"
-  "GB=Great Britain"
-  "GD=Grenada"
-  "GE=Georgia"
-  "GF=French Guiana"
-  "GH=Ghana"
-  "GI=Gibraltar"
-  "GL=Greenland"
-  "GM=Gambia"
-  "GN=Guinea"
-  "GP=Guadeloupe"
-  "GQ=Equatorial Guinea"
-  "GR=Greece"
-  "GS=S. Georgia and S. Sandwich Isls."
-  "GT=Guatemala"
-  "GU=Guam"
-  "GW=Guinea-Bissau"
-  "GY=Guyana"
-  "HK=Hong Kong"
-  "HM=Heard and McDonald Islands"
-  "HN=Honduras"
-  "HR=Croatia"
-  "HT=Haiti"
-  "HU=Hungary"
-  "ID=Indonesia"
-  "IE=Ireland"
-  "IL=Israel"
-  "IN=India"
-  "IO=British Indian Ocean Territory"
-  "IQ=Iraq"
-  "IR=Iran"
-  "IS=Iceland"
-  "IT=Italy"
-  "JM=Jamaica"
-  "JO=Jordan"
-  "JP=Japan"
-  "KE=Kenya"
-  "KG=Kyrgyzstan"
-  "KH=Cambodia"
-  "KI=Kiribati"
-  "KM=Comoros"
-  "KN=Saint Kitts and Nevis"
-  "KP=North Korea"
-  "KR=South Korea"
-  "KW=Kuwait"
-  "KY=Cayman Islands"
-  "KZ=Kazakhstan"
-  "LA=Laos"
-  "LB=Lebanon"
-  "LC=Saint Lucia"
-  "LI=Liechtenstein"
-  "LK=Sri Lanka"
-  "LR=Liberia"
-  "LS=Lesotho"
-  "LT=Lithuania"
-  "LU=Luxembourg"
-  "LV=Latvia"
-  "LY=Libya"
-  "MA=Morocco"
-  "MC=Monaco"
-  "MD=Moldova"
-  "MG=Madagascar"
-  "MH=Marshall Islands"
-  "MK=Macedonia"
-  "ML=Mali"
-  "MM=Myanmar"
-  "MN=Mongolia"
-  "MO=Macau"
-  "MP=Northern Mariana Islands"
-  "MQ=Martinique"
-  "MR=Mauritania"
-  "MS=Montserrat"
-  "MT=Malta"
-  "MU=Mauritius"
-  "MV=Maldives"
-  "MW=Malawi"
-  "MX=Mexico"
-  "MY=Malaysia"
-  "MZ=Mozambique"
-  "NA=Namibia"
-  "NC=New Caledonia"
-  "NE=Niger"
-  "NF=Norfolk Island"
-  "NG=Nigeria"
-  "NI=Nicaragua"
-  "NL=Netherlands"
-  "NO=Norway"
-  "NP=Nepal"
-  "NR=Nauru"
-  "NT=Neutral Zone"
-  "NU=Niue"
-  "NZ=New Zealand"
-  "OM=Oman"
-  "PA=Panama"
-  "PE=Peru"
-  "PF=French Polynesia"
-  "PG=Papua New Guinea"
-  "PH=Philippines"
-  "PK=Pakistan"
-  "PL=Poland"
-  "PM=St. Pierre and Miquelon"
-  "PN=Pitcairn"
-  "PR=Puerto Rico"
-  "PS=Palestinian State"
-  "PT=Portugal"
-  "PW=Palau"
-  "PY=Paraguay"
-  "QA=Qatar"
-  "RE=Reunion"
-  "RO=Romania"
-  "RU=Russian Federation"
-  "RW=Rwanda"
-  "SA=Saudi Arabia"
-  "Sb=Solomon Islands"
-  "SC=Seychelles"
-  "SD=Sudan"
-  "SE=Sweden"
-  "SG=Singapore"
-  "SH=St. Helena"
-  "SI=Slovenia"
-  "SJ=Svalbard and Jan Mayen Islands"
-  "SK=Slovak Republic"
-  "SL=Sierra Leone"
-  "SM=San Marino"
-  "SN=Senegal"
-  "SO=Somalia"
-  "SR=Suriname"
-  "ST=Sao Tome and Principe"
-  "SU=Former USSR"
-  "SV=El Salvador"
-  "SY=Syria"
-  "SZ=Swaziland"
-  "TC=Turks and Caicos Islands"
-  "TD=Chad"
-  "TF=French Southern Territories"
-  "TG=Togo"
-  "TH=Thailand"
-  "TJ=Tajikistan"
-  "TK=Tokelau"
-  "TM=Turkmenistan"
-  "TN=Tunisia"
-  "TO=Tonga"
-  "TP=East Timor"
-  "TR=Turkey"
-  "TT=Trinidad and Tobago"
-  "TV=Tuvalu"
-  "TW=Taiwan"
-  "TZ=Tanzania"
-  "UA=Ukraine"
-  "UG=Uganda"
-  "UK=United Kingdom"
-  "UM=US Minor Outlying Islands"
-  "US=United States"
-  "UY=Uruguay"
-  "UZ=Uzbekistan"
-  "VA=Vatican City State"
-  "VC=Saint Vincent and the Grenadines"
-  "VE=Venezuela"
-  "VG=Virgin Islands (British)"
-  "VI=Virgin Islands (U.S.)"
-  "VN=Viet Nam"
-  "VU=Vanuatu"
-  "WF=Wallis and Futuna Islands"
-  "WS=Samoa"
-  "YE=Yemen"
-  "YT=Mayotte"
-  "YU=Yugoslavia"
-  "ZA=South Africa"
-  "ZM=Zambia"
-  "ZR=Zaire"
-  "ZW=Zimbabwe"
-}
-
 set used 0
 
 proc pub_geoip {nick uhost hand chan text} {
-	global codes used
-	set lookup [lindex [split $text] 0] 
-	catch {set http [::http::geturl http://ipinfo.io/$lookup/json -timeout 6000]} error 
-	set data [::http::data $http] 
-	set json [::json::json2dict $data] 
-	::http::cleanup $http 
-	set keys [dict keys $json]
-	set expecting {ip hostname city region country loc postal phone org}
-		foreach ele $expecting {
-		if {[lsearch $keys $ele] != -1} {
-			set $ele [dict get $json $ele]
-			} else {
-			set $ele "n/a"
-		}
-	}
-	  incr used
-  set input $country
-  set len [string length $input]
-  set results 0
-  foreach code $codes {
-    set splits [split $code "="]
-    set code [lindex $splits 0]
-    set value [lindex $splits 1]
-    if {[string tolower $input]==[string tolower $code]} {
-      set results 1
-      set countryname $value
+    global used
+    set lookup [lindex [split $text] 0]
+    
+    # Call ip-api.com instead of ipinfo.io
+    catch {set http [::http::geturl http://ip-api.com/json/$lookup?fields=ip,query,city,regionName,country,countryCode,as -timeout 6000]} error
+    set data [::http::data $http]
+    
+    # Check if the request was successful
+    if {[string match "fail" $data]} {
+        putserv "PRIVMSG $chan :\00304 Error: Could not retrieve data for IP $lookup."
+        return
     }
-  }
-  if {$results==0} {
-      set countryname "Unknown"
-  }
-   putserv "PRIVMSG $chan :\00301\002 I\002P:\00302 $ip \00301- \002H\002ostname:\00303 $hostname \00301- \002C\002ity:\00312 $city \00301- \002R\002egion:\00307 $region \00301- \002C\002ountry:\00304\002 $country \002\00301\(\00314$countryname\00301\) \00301- \002O\002rganization:\00310 $org \003"
-} 
+    
+    # Debug: Log the raw response from the API to inspect its structure
+    putlog "DEBUG: Raw API response for $lookup: $data"
+    
+    # Parse the JSON response
+    set json [::json::json2dict $data]
+    ::http::cleanup $http
+    
+    # If the response does not contain the necessary keys, handle the case
+    if {[dict exists $json "country"] == 0} {
+        putserv "PRIVMSG $chan :\00304 Error: Missing expected data for IP $lookup."
+        return
+    }
+
+    # Extract necessary data from the response
+    set ip $lookup
+    set query [dict get $json query]
+    set city [dict get $json city]
+    set regionName [dict get $json regionName]
+    set country [dict get $json country]
+    set countryCode [dict get $json countryCode]
+    set as [dict get $json as]
+    
+    # If any field is missing or empty, set it to "n/a"
+    if {$query == ""} {set query "n/a"}
+    if {$city == ""} {set city "n/a"}
+    if {$regionName == ""} {set regionName "n/a"}
+    if {$country == ""} {set country "n/a"}
+    if {$countryCode == ""} {set countryCode "n/a"}
+    if {$as == ""} {set as "n/a"}
+    
+    # Build the IP + hostname part
+    set ip_part "\00306Whois:\00312 $ip"
+    if {![string equal $query "n/a"] && ![string equal $query $ip]} {
+        append ip_part " \00306(\00312$query\00306)"
+    }
+    
+    # Build the rest output string
+    set output "$ip_part \00301- \00306City:\00304 $city \00301- \00306Region:\00307 $regionName \00301- \00306Country:\00303 $countryCode \00306(\00303$country\00306) \00301- \00306Organization:\00310 $as \003"
+    
+    # Send the formatted response to the channel
+    putserv "PRIVMSG $chan :$output"
+}
 
 putlog "GeoIP.tcl v$geoip(version) loaded."
