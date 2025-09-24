@@ -111,7 +111,7 @@ proc get_ihsg_reply {} {
 # ===== Command public =====
 proc saham_pub {nick uhost handle chan text} {
     if {[llength $text] < 1} {
-        putquick "PRIVMSG $chan : Usage: !saham <ticker>"
+        putquick "PRIVMSG $chan : Usage: !saham <ticker>, Ex: !saham BBMD"
         return
     }
     set ticker [string toupper [lindex $text 0]]
@@ -139,5 +139,6 @@ proc ihsg_priv {nick uhost handle text} {
     set reply [get_ihsg_reply]
     putquick "PRIVMSG $nick :$reply"
 }
+
 
 putlog "Saham.tcl v$saham(version) loaded."
